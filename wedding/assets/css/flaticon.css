@@ -1,0 +1,30 @@
+@font-face {
+  font-family: "flaticon";
+  src: url("../fonts/flaticon.woff") format("woff");
+  font-display: block;
+  font-style: normal;
+  font-weight: normal;
+}
+
+i[class^="flaticon-"]::before,
+i[class*=" flaticon-"]::before {
+  font-family: "flaticon" !important;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal !important;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-dove::before {
+  content: "\f10e";
+}
+
+.flaticon-balloon::before {
+  content: "\f123";
+}
+
+.flaticon-dance::before {
+  content: "\f124";
+}

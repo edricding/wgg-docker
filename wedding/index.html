@@ -1,99 +1,395 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Our wedding website is coming soon.">
-  <title>Wedding · wagaga.top</title>
-  <style>
-    :root {
-      font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
-      color: #463b36;
-      background: #f7f1eb;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at 15% 15%, rgba(213, 167, 161, .22), transparent 30%),
-        radial-gradient(circle at 85% 80%, rgba(158, 177, 149, .24), transparent 32%),
-        #f7f1eb;
-    }
-
-    main {
-      width: min(780px, 100%);
-      padding: clamp(48px, 10vw, 96px) 32px;
-      text-align: center;
-      border: 1px solid rgba(97, 73, 64, .18);
-      border-radius: 4px;
-      background: rgba(255, 253, 249, .82);
-      box-shadow: 0 28px 80px rgba(86, 64, 54, .12);
-    }
-
-    .eyebrow {
-      margin: 0 0 24px;
-      color: #9a6d65;
-      font-family: ui-sans-serif, system-ui, sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(48px, 10vw, 88px);
-      font-weight: 400;
-      letter-spacing: -.045em;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      width: min(300px, 70%);
-      margin: 32px auto;
-      color: #b8877e;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: rgba(154, 109, 101, .35);
-    }
-
-    .message {
-      max-width: 500px;
-      margin: 0 auto;
-      color: #776660;
-      font-size: clamp(18px, 3vw, 22px);
-      line-height: 1.8;
-    }
-
-    footer {
-      margin-top: 42px;
-      color: #a18e87;
-      font-family: ui-sans-serif, system-ui, sans-serif;
-      font-size: 12px;
-      letter-spacing: .12em;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>婚礼邀请函</title>
+    <link href="assets/css/flaticon.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 </head>
+
 <body>
-  <main>
-    <p class="eyebrow">Save the date</p>
-    <h1>Our Wedding</h1>
-    <div class="divider" aria-hidden="true">♡</div>
-    <p class="message">我们的婚礼网站正在准备中。<br>期待在这里与你分享这份喜悦。</p>
-    <footer>WEDDING.WAGAGA.TOP</footer>
-  </main>
+    <!-- start page-wrapper -->
+    <div class="page-wrapper">
+        <!-- start preloader -->
+        <div class="preloader">
+            <div class="vertical-centered-box">
+                <div class="content">
+                    <div class="loader-circle"></div>
+                    <div class="loader-line-mask">
+                        <div class="loader-line"></div>
+                    </div><img src="assets/picture/preloader.png" alt="">
+                </div>
+            </div>
+        </div><!-- end preloader -->
+
+        <!-- start of hero -->
+        <section class="static-hero">
+            <div class="hero-container">
+                <div class="hero-inner">
+                    <div class="container-fluid">
+                        <div class="row align-items-center static-hero-row">
+                            <div class="col-12 col-lg-6 static-hero-left">
+                                <div class="wpo-static-hero-inner">
+                                    <div style="height: 200px; margin-bottom: 20px;"><img src="assets/picture/logo-main.png" alt="" style="height: 100%;"></div>
+                                    <div class="slide-title">
+                                        <h2>赵莹琪 <span>&</span>丁桢函</h2>
+                                    </div>
+                                    <div class="slide-text">
+                                        <p>我们将于 2026年10月6日 在天津举办婚礼</p>
+                                    </div>
+                                    <div class="wpo-wedding-date">
+                                        <div class="clock-grids">
+                                            <div id="clock" data-date="2026-10-06T00:00:00+08:00"></div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 static-hero-media">
+                                <div class="static-hero-right">
+                                    <div class="static-hero-img">
+                                        <div class="static-hero-img-inner"><img src="assets/picture/s1.png" alt=""></div>
+                                        <div class="static-hero-shape-1"><img src="assets/picture/flower1.png" alt=""></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- end of hero slider -->
+        <!-- start couple-section -->
+        <section class="couple-section section-padding" id="couple">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col col-lg-11">
+                        <div class="couple-area clearfix">
+                            <div class="couple-item bride">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-4">
+                                        <div class="couple-img"><img src="assets/picture/2.jpg" alt=""></div>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <div class="couple-text">
+                                            <h3>Jenny Wilson</h3>
+                                            <p>Lorem ipsum dolor sit amet,consectetur adipiscing elit. Urna orci auctor
+                                                vitae nisl. Erat fringilla pellentesque amet tempus. Commodo mi
+                                                vitae,sed sagittis blandit. Leo netus magna fusce ac turpis mauris
+                                                maecenas non.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="couple-item groom">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-7 order-lg-1 order-2">
+                                        <div class="couple-text">
+                                            <h3>Leslie Alexander</h3>
+                                            <p>Lorem ipsum dolor sit amet,consectetur adipiscing elit. Urna orci auctor
+                                                vitae nisl. Erat fringilla pellentesque amet tempus. Commodo mi
+                                                vitae,sed sagittis blandit. Leo netus magna fusce ac turpis mauris
+                                                maecenas non.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 order-lg-2 order-1">
+                                        <div class="couple-img"><img src="assets/picture/3.jpg" alt=""></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end container -->
+            <div class="shape-1"><img src="assets/picture/shape-1.png" alt=""></div>
+            <div class="shape-2"><img src="assets/picture/shape-2.png" alt=""></div>
+        </section><!-- end couple-section -->
+        <!-- start wpo-video-section -->
+        <section class="wpo-video-section" aria-label="婚礼照片背景"></section><!-- end wpo-video-section-->
+        <!-- start story-section -->
+        <section class="story-section section-padding" id="story">
+            <div class="container">
+                <div class="row">
+                    <div class="wpo-section-title">
+                        <div class="section-title-icon"><i class="fi flaticon-dove"></i></div>
+                        <h2>我们的故事</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-xs-12">
+                        <div class="story-timeline">
+                            <div class="row">
+                                <div class="col offset-lg-6 col-lg-6 col-12 text-holder"><span class="heart"><i
+                                            class="fi flaticon-balloon"></i></span></div>
+                            </div>
+                            <div class="story-timeline-item s1">
+                                <div class="row align-items-center">
+                                    <div class="col col-lg-6 col-12">
+                                        <div class="img-holder right-align-text wow fadeInLeftSlow"
+                                            data-wow-duration="1500ms"><img src="assets/picture/1.jpg" alt=""
+                                                class="img img-responsive"></div>
+                                    </div>
+                                    <div class="col col-lg-6 col-12">
+                                        <div class="story-text left-align-text wow fadeInRightSlow"
+                                            data-wow-duration="2000ms">
+                                            <h3>First Time We Meet</h3><span class="date">19 Jan 2018</span>
+                                            <div class="line-shape">
+                                                <div class="outer-ball">
+                                                    <div class="inner-ball"></div>
+                                                </div>
+                                            </div>
+                                            <p>Lorem ipsum dolor sit amet,constetur adicng elit. Ultricies nulla mi
+                                                tempus mcorper for praesent. Ultricies interdum volutpat morbi nam
+                                                ornare neque elit leo,diam. Malesuada enim ac amurna tempor vel duis.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="story-timeline-item">
+                                <div class="row align-items-center">
+                                    <div class="col col-lg-6 col-12 order-lg-1 order-2 text-holder left-text">
+                                        <div class="story-text right-align-text wow fadeInLeftSlow"
+                                            data-wow-duration="2000ms">
+                                            <h3>Our First Date</h3><span class="date">22 May 2021</span>
+                                            <div class="line-shape s2">
+                                                <div class="outer-ball">
+                                                    <div class="inner-ball"></div>
+                                                </div>
+                                            </div>
+                                            <p>Lorem ipsum dolor sit amet,constetur adicng elit. Ultricies nulla mi
+                                                tempus mcorper for praesent. Ultricies interdum volutpat morbi nam
+                                                ornare neque elit leo,diam. Malesuada enim ac amurna tempor vel duis.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col col-lg-6 col-12 order-lg-2 order-1">
+                                        <div class="img-holder left-align-text"><img src="assets/picture/21.jpg" alt=""
+                                                class="img img-responsive wow fadeInRightSlow"
+                                                data-wow-duration="1500ms"><span class="heart"><i
+                                                    class="fi flaticon-dance"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="story-timeline-item">
+                                <div class="row align-items-center">
+                                    <div class="col col-lg-6 col-12">
+                                        <div class="img-holder right-align-text left-site right-heart"><img
+                                                src="assets/picture/31.jpg" alt=""
+                                                class="img img-responsive wow fadeInLeftSlow"
+                                                data-wow-duration="1500ms"><span class="heart"><i
+                                                    class="fi flaticon-dove"></i></span></div>
+                                    </div>
+                                    <div class="col col-lg-6 col-12">
+                                        <div class="story-text left-align-text wow fadeInRightSlow"
+                                            data-wow-duration="2000ms">
+                                            <h3>She Said Yes!</h3><span class="date">15 June 2022</span>
+                                            <div class="line-shape">
+                                                <div class="outer-ball">
+                                                    <div class="inner-ball"></div>
+                                                </div>
+                                            </div>
+                                            <p>Lorem ipsum dolor sit amet,constetur adicng elit. Ultricies nulla mi
+                                                tempus mcorper for praesent. Ultricies interdum volutpat morbi nam
+                                                ornare neque elit leo,diam. Malesuada enim ac amurna tempor vel duis.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end row -->
+            </div><!-- end container -->
+            <div class="shape-1">
+                <div class="sticky-shape"><img src="assets/picture/shape1.png" alt=""></div>
+            </div>
+            <div class="shape-2">
+                <div class="sticky-shape"><img src="assets/picture/shape2.png" alt=""></div>
+            </div>
+        </section><!-- end story-section -->
+      
+        <!-- start wpo-portfolio-section -->
+        <section class="wpo-portfolio-section" id="gallery">
+            <div class="container">
+                <div class="row">
+                    <div class="wpo-section-title">
+                        <div class="section-title-icon"><i class="fi flaticon-dove"></i></div>
+                        <h2>旅行婚礼精彩瞬间</h2>
+                    </div>
+                </div>
+                <div class="sortable-gallery">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="portfolio-grids gallery-container clearfix">
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/17.jpg" class="gallery-lightbox"><img src="assets/picture/17.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/22.jpg" class="gallery-lightbox"><img src="assets/picture/22.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/32.jpg" class="gallery-lightbox"><img src="assets/picture/32.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/5.jpg" class="gallery-lightbox"><img src="assets/picture/5.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/4.jpg" class="gallery-lightbox"><img src="assets/picture/4.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                                <div class="grid">
+                                    <div class="img-holder"><a href="assets/picture/6.jpg" class="gallery-lightbox"><img src="assets/picture/6.jpg" alt=""
+                                                class="img img-responsive">
+                                            <div class="hover-content"><span aria-hidden="true">＋</span></div>
+                                        </a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end container -->
+        </section><!-- end wpo-portfolio-section -->
+        <!-- start of wpo-contact-section -->
+        <section class="wpo-contact-section section-padding" id="RSVP">
+            <div class="container">
+                <div class="wpo-contact-section-wrapper">
+                    <div class="wpo-contact-form-area">
+                        <div class="wpo-section-title">
+                            <div class="section-title-icon" style="margin-bottom: 50px;"><img src="assets/picture/preloader.png" alt=""></div>
+                            <h2>期待您的到来</h2>
+                        </div>
+                        <form class="contact-validation-active" id="contact-form-main">
+                            <div><input type="text" class="form-control" name="name" id="name" placeholder="姓名"></div>
+                            <div><input type="text" class="form-control" name="phone" id="phone" placeholder="手机号">
+                            </div>
+                            <div class="radio-buttons">
+                                <p><input type="radio" id="attend" name="radio-group" checked=""><label
+                                        for="attend">是的，我会出席</label></p>
+                                <p><input type="radio" id="not" name="radio-group"><label for="not">抱歉，我不能前来</label></p>
+                            </div>
+                            <div><select name="guest" class="form-control">
+                                    <option disabled="disabled" selected="">出席人数</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select></div>
+                            <div class="submit-area"><button type="submit" class="theme-btn-s3">登记</button>
+                            </div>
+                            <div class="clearfix error-handling-messages">
+                                <div id="success">感谢！</div>
+                                <div id="error">网络有些问题，请稍后重试。</div>
+                            </div>
+                        </form>
+                        <div class="border-style"></div>
+                    </div>
+                    <div class="vector-1">
+                        <picture>
+                            <source media="(max-width: 575px)" srcset="assets/picture/iris-banner-mobile.png">
+                            <img src="assets/picture/flower11.png" alt="">
+                        </picture>
+                    </div>
+                    <div class="vector-2">
+                        <picture>
+                            <source media="(max-width: 575px)" srcset="assets/picture/iris-banner-mobile.png">
+                            <img src="assets/picture/flower21.png" alt="">
+                        </picture>
+                    </div>
+                </div>
+            </div>
+            <div class="shape-1"><img src="assets/picture/shape1.png" alt=""></div>
+            <div class="shape-2"><img src="assets/picture/shape2.png" alt=""></div>
+        </section><!-- end of wpo-contact-section -->
+
+        <!-- start wpo-event-section -->
+        <section class="wpo-event-section section-padding" id="event">
+            <div class="container">
+                <div class="row">
+                    <div class="wpo-section-title-s2">
+                        <div class="section-title-icon"><i class="fi flaticon-dove"></i></div>
+                        <h2>时间 & 地点</h2>
+                    </div>
+                </div>
+                <div class="wpo-event-wrap">
+                    <div class="row">
+                        <div class="col col-lg-4 col-md-6 col-12">
+                            <div class="wpo-event-item">
+                                <div class="wpo-event-text">
+                                    <h2>接待</h2>
+                                    <ul>
+                                        <li>2026.10.06 <br>1:00 PM – 4:30 PM</li>
+                                        <li>天津市武清区新房子村</li>
+                                        <li>133-4201-8863</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-lg-4 col-md-6 col-12">
+                            <div class="wpo-event-item">
+                                <div class="wpo-event-text">
+                                    <h2>仪式</h2>
+                                    <ul>
+                                        <li>2026.10.06 <br>1:00 PM – 4:30 PM</li>
+                                        <li>天津市武清区新房子村</li>
+                                        <li>133-4201-8863</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-lg-4 col-md-6 col-12">
+                            <div class="wpo-event-item">
+                                <div class="wpo-event-text">
+                                    <h2>典礼</h2>
+                                    <ul>
+                                        <li>2026.10.06 <br>1:00 PM – 4:30 PM</li>
+                                        <li>天津市武清区新房子村</li>
+                                        <li>133-4201-8863</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end container -->
+        </section><!-- end wpo-event-section -->
+
+
+        <!-- start of wpo-site-footer-section -->
+        <footer class="wpo-site-footer">
+
+            <div class="wpo-lower-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col col-xs-12">
+                            <p class="copyright">&copy;2026 WAGAGA. Design By <a href="https://edricd.com">EDRIC DING</a>.  <br>All
+                                Rights By WAGAGA.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer><!-- end of wpo-site-footer-section -->
+    </div><!-- end of page-wrapper -->
+    <script src="assets/js/script.js"></script>
 </body>
+
 </html>
