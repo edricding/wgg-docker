@@ -20,36 +20,54 @@ if [[ "${ID:-}" != "alinux" || ( "$ALINUX_MAJOR" != "3" && "$ALINUX_MAJOR" != "4
 fi
 
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+DOCKER_REGISTRY_MIRROR="${DOCKER_REGISTRY_MIRROR:-https://ykakt2xs.mirror.aliyuncs.com}"
 
-echo "[1/5] Installing basic tools..."
+echo "[1/6] Installing basic tools..."
 dnf -y install git curl wget
 
 if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
   if [[ "$ALINUX_MAJOR" == "3" ]]; then
-    echo "[2/5] Configuring the Alibaba Cloud Docker CE mirror..."
+    echo "[2/6] Configuring the Alibaba Cloud Docker CE package repository..."
     wget -O /etc/yum.repos.d/docker-ce.repo \
       http://mirrors.cloud.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
     sed -i 's|https://mirrors.aliyun.com|http://mirrors.cloud.aliyuncs.com|g' \
       /etc/yum.repos.d/docker-ce.repo
 
-    echo "[3/5] Installing Docker Engine and Docker Compose..."
+    echo "[3/6] Installing Docker Engine and Docker Compose..."
     dnf -y install dnf-plugin-releasever-adapter --repo alinux3-plus
     dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   else
-    echo "[2/5] Using the Alibaba Cloud Linux 4 package repository..."
-    echo "[3/5] Installing Moby and Docker Compose..."
+    echo "[2/6] Using the Alibaba Cloud Linux 4 package repository..."
+    echo "[3/6] Installing Moby and Docker Compose..."
     dnf -y install moby docker-compose-plugin
   fi
 else
-  echo "[2/5] Docker and Docker Compose are already installed."
-  echo "[3/5] Skipping Docker package installation."
+  echo "[2/6] Docker and Docker Compose are already installed."
+  echo "[3/6] Skipping Docker package installation."
 fi
 
-echo "[4/5] Starting Docker and enabling it at boot..."
-systemctl enable --now docker
+echo "[4/6] Configuring the Docker registry mirror..."
+mkdir -p /etc/docker
+if [[ -s /etc/docker/daemon.json ]]; then
+  if ! grep -Fq "$DOCKER_REGISTRY_MIRROR" /etc/docker/daemon.json; then
+    echo "Error: /etc/docker/daemon.json already exists and was not overwritten." >&2
+    echo "Add this registry mirror manually: $DOCKER_REGISTRY_MIRROR" >&2
+    exit 1
+  fi
+else
+  cat > /etc/docker/daemon.json <<EOF
+{
+  "registry-mirrors": ["$DOCKER_REGISTRY_MIRROR"]
+}
+EOF
+fi
+
+echo "[5/6] Starting Docker and enabling it at boot..."
+systemctl enable docker
+systemctl restart docker
 docker version
 docker compose version
 
-echo "[5/5] Starting the website..."
+echo "[6/6] Starting the website..."
 cd "$PROJECT_DIR"
 bash deploy.sh

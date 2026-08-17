@@ -47,6 +47,7 @@ sudo bash /opt/wgg-docker/scripts/bootstrap-alibaba-linux.sh
 ```
 
 初始化脚本会安装 Docker Engine、Docker Compose 插件，设置 Docker 开机启动，并启动网站。
+它还会自动配置项目使用的阿里云 ACR 镜像加速地址，避免服务器无法访问 Docker Hub。
 
 ## 以后更新网站
 
