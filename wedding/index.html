@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Our wedding website is coming soon.">
+  <title>Wedding · wagaga.top</title>
+  <style>
+    :root {
+      font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+      color: #463b36;
+      background: #f7f1eb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(213, 167, 161, .22), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(158, 177, 149, .24), transparent 32%),
+        #f7f1eb;
+    }
+
+    main {
+      width: min(780px, 100%);
+      padding: clamp(48px, 10vw, 96px) 32px;
+      text-align: center;
+      border: 1px solid rgba(97, 73, 64, .18);
+      border-radius: 4px;
+      background: rgba(255, 253, 249, .82);
+      box-shadow: 0 28px 80px rgba(86, 64, 54, .12);
+    }
+
+    .eyebrow {
+      margin: 0 0 24px;
+      color: #9a6d65;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 10vw, 88px);
+      font-weight: 400;
+      letter-spacing: -.045em;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: min(300px, 70%);
+      margin: 32px auto;
+      color: #b8877e;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(154, 109, 101, .35);
+    }
+
+    .message {
+      max-width: 500px;
+      margin: 0 auto;
+      color: #776660;
+      font-size: clamp(18px, 3vw, 22px);
+      line-height: 1.8;
+    }
+
+    footer {
+      margin-top: 42px;
+      color: #a18e87;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Save the date</p>
+    <h1>Our Wedding</h1>
+    <div class="divider" aria-hidden="true">♡</div>
+    <p class="message">我们的婚礼网站正在准备中。<br>期待在这里与你分享这份喜悦。</p>
+    <footer>WEDDING.WAGAGA.TOP</footer>
+  </main>
+</body>
+</html>

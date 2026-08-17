@@ -8,6 +8,8 @@
 .
 ├── frontend/
 │   └── index.html
+├── wedding/
+│   └── index.html
 ├── nginx/
 │   └── default.conf
 ├── scripts/
@@ -28,6 +30,13 @@ docker compose up -d --build
 ```bash
 docker compose down
 ```
+
+Nginx 当前提供两个站点：
+
+- `wagaga.top`：`frontend/` 目录。
+- `wedding.wagaga.top`：`wedding/` 目录。
+
+在阿里云 DNS 中为 `wagaga.top` 添加一条 A 记录，主机记录填写 `wedding`，记录值填写服务器公网 IP，即可访问婚礼子站。
 
 ## 新服务器首次部署
 
