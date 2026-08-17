@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wgg-site:latest
+    container_name: wgg-site
+    restart: unless-stopped
+    ports:
+      - "80:80"
+
