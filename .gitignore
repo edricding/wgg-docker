@@ -7,6 +7,10 @@
 /secrets/*
 !/secrets/.gitkeep
 
+# Let's Encrypt account data and certificates
+/certbot/conf/
+/certbot/www/.well-known/acme-challenge/*
+
 # Editor and IDE settings
 .idea/
 .vscode/
