@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initGallery();
   initBackToTop();
   initRsvpForm();
+  initCopyText();
 });
 
 window.addEventListener("load", () => {
@@ -163,5 +164,66 @@ function initRsvpForm() {
 
     error.textContent = "登记提交功能尚未接入，请稍后再试。";
     error.style.display = "block";
+  });
+}
+
+function initCopyText() {
+  const triggers = document.querySelectorAll("[data-copy-text]");
+  if (!triggers.length) return;
+
+  const toast = document.createElement("div");
+  toast.className = "copy-toast font-smiley";
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
+  toast.setAttribute("aria-atomic", "true");
+  document.body.appendChild(toast);
+
+  let hideTimer;
+  const showToast = (message, isError = false) => {
+    window.clearTimeout(hideTimer);
+    toast.textContent = message;
+    toast.classList.toggle("is-error", isError);
+    toast.classList.add("is-visible");
+    hideTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+  };
+
+  const fallbackCopy = (text) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    if (!copied) throw new Error("Copy command failed");
+  };
+
+  const copyText = async (text) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        // Fall back for browsers that expose the API but deny clipboard access.
+      }
+    }
+    fallbackCopy(text);
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", async () => {
+      try {
+        await copyText(trigger.dataset.copyText);
+        showToast("复制成功");
+      } catch (error) {
+        showToast("复制失败，请长按文字复制", true);
+      }
+    });
   });
 }
