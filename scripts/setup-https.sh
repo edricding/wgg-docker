@@ -35,6 +35,12 @@ fi
 echo "Stopping the web container temporarily so Let's Encrypt can verify port 80..."
 "${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" stop web >/dev/null 2>&1 || true
 
+restore_web() {
+  echo "Certificate setup did not finish; restarting the previous web container." >&2
+  "${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" start web >/dev/null 2>&1 || true
+}
+trap restore_web ERR
+
 "${DOCKER[@]}" run --rm \
   --name wgg-certbot-bootstrap \
   -p 80:80 \
@@ -45,4 +51,6 @@ echo "Stopping the web container temporarily so Let's Encrypt can verify port 80
   --cert-name wagaga.top \
   -d wagaga.top -d wedding.wagaga.top -d db.wagaga.top
 
+trap - ERR
+"${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" start web >/dev/null 2>&1 || true
 echo "HTTPS certificate created. Run: sudo bash ${PROJECT_DIR}/deploy.sh"

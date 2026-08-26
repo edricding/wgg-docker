@@ -39,30 +39,42 @@ git pull --ff-only origin "$DEPLOY_BRANCH"
 required_secret_files=(
   "$PROJECT_DIR/secrets/mysql_root_password.txt"
   "$PROJECT_DIR/secrets/mysql_app_password.txt"
+  "$PROJECT_DIR/secrets/admin_password.txt"
+  "$PROJECT_DIR/secrets/admin.htpasswd"
 )
 
 for secret_file in "${required_secret_files[@]}"; do
   if [[ ! -s "$secret_file" ]]; then
-    echo "Error: missing database secret: $secret_file" >&2
+    echo "Error: missing required secret: $secret_file" >&2
     echo "Run: sudo bash $PROJECT_DIR/scripts/setup-database-secrets.sh" >&2
     exit 1
   fi
 done
 
+if [[ ! -s "$PROJECT_DIR/certbot/conf/live/wagaga.top/fullchain.pem" \
+  || ! -s "$PROJECT_DIR/certbot/conf/live/wagaga.top/privkey.pem" ]]; then
+  echo "Error: HTTPS certificate is missing." >&2
+  echo "Run: sudo CERTBOT_EMAIL=you@example.com bash $PROJECT_DIR/scripts/setup-https.sh" >&2
+  exit 1
+fi
+
 echo "[2/4] Building and starting containers..."
 "${DOCKER[@]}" compose up -d --build --remove-orphans
 
-echo "[3/4] Waiting for MySQL and HTTP health checks..."
+echo "[3/4] Waiting for MySQL, API and HTTPS health checks..."
 healthy=0
 for _ in {1..90}; do
   if "${DOCKER[@]}" compose exec -T database sh -c \
       'mysqladmin ping -h 127.0.0.1 -uroot --password="$(cat /run/secrets/mysql_root_password)" --silent' \
       >/dev/null 2>&1 \
+    && "${DOCKER[@]}" compose exec -T api node -e \
+      "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" \
+      >/dev/null 2>&1 \
     && curl --fail --silent --show-error http://127.0.0.1/healthz >/dev/null 2>&1 \
     && curl --fail --silent --show-error \
-      --header "Host: wedding.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1 \
-    && curl --fail --silent --show-error \
-      --header "Host: db.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1; then
+      --resolve wedding.wagaga.top:443:127.0.0.1 https://wedding.wagaga.top/ >/dev/null 2>&1 \
+    && [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' \
+      --resolve db.wagaga.top:443:127.0.0.1 https://db.wagaga.top/)" == "401" ]]; then
     healthy=1
     break
   fi
@@ -72,12 +84,12 @@ done
 if [[ "$healthy" -ne 1 ]]; then
   echo "Error: the site did not become healthy in time." >&2
   "${DOCKER[@]}" compose ps
-  "${DOCKER[@]}" compose logs --tail=100 web database
+  "${DOCKER[@]}" compose logs --tail=100 web api database
   exit 1
 fi
 
 echo "[4/4] Deployment complete."
 "${DOCKER[@]}" compose ps
-echo "Site: http://wagaga.top"
-echo "Wedding: http://wedding.wagaga.top"
-echo "Admin: http://db.wagaga.top"
+echo "Site: https://wagaga.top"
+echo "Wedding: https://wedding.wagaga.top"
+echo "Admin: https://db.wagaga.top"

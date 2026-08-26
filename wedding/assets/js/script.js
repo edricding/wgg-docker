@@ -144,24 +144,52 @@ function initRsvpForm() {
 
   const error = form.querySelector("#error");
 
-  form.addEventListener("submit", (event) => {
+  const submitButton = form.querySelector("button[type='submit']");
+  const setFeedback = (message, type = "error") => {
+    error.textContent = message;
+    error.classList.toggle("is-success", type === "success");
+    error.style.display = "block";
+  };
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const name = form.elements.name.value.trim();
     const phone = form.elements.phone.value.trim();
-    const guest = form.elements.guest.value;
+    const attendance = form.elements["radio-group"].value || "yes";
+    const guestCount = Number.parseInt(form.elements.guest.value, 10) || 1;
     const isValidPhone = /^1\d{10}$/.test(phone);
 
     error.style.display = "none";
+    error.classList.remove("is-success");
 
-    if (!name || !isValidPhone || !guest) {
-      error.textContent = "请填写姓名、11 位手机号和出席人数。";
-      error.style.display = "block";
+    if (!name || !isValidPhone) {
+      setFeedback("请填写姓名和正确的 11 位手机号。");
       return;
     }
 
-    error.textContent = "登记提交功能尚未接入，请稍后再试。";
-    error.style.display = "block";
+    submitButton.disabled = true;
+    submitButton.textContent = "提交中…";
+
+    try {
+      const response = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ name, phone, attendance, guestCount }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || "提交失败，请稍后重试。");
+
+      form.reset();
+      form.elements.guest.value = "1";
+      form.querySelector("#attend").checked = true;
+      setFeedback("登记成功，感谢您的回复！", "success");
+    } catch (submitError) {
+      setFeedback(submitError.message || "网络有些问题，请稍后重试。");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "登记";
+    }
   });
 }
 

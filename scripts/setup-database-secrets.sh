@@ -46,15 +46,10 @@ create_secret "$ROOT_PASSWORD_FILE" "MySQL root password"
 create_secret "$APP_PASSWORD_FILE" "MySQL application password"
 create_secret "$ADMIN_PASSWORD_FILE" "admin login password"
 
-if [[ -s "$ADMIN_HTPASSWD_FILE" ]]; then
-  echo "Keeping existing admin authentication file."
-  chmod 600 "$ADMIN_HTPASSWD_FILE"
-else
-  admin_hash="$(openssl passwd -apr1 -in "$ADMIN_PASSWORD_FILE")"
-  printf 'admin:%s\n' "$admin_hash" > "$ADMIN_HTPASSWD_FILE"
-  chmod 600 "$ADMIN_HTPASSWD_FILE"
-  echo "Generated admin HTTP authentication file."
-fi
+admin_hash="$(openssl passwd -apr1 -in "$ADMIN_PASSWORD_FILE")"
+printf 'admin:%s\n' "$admin_hash" > "$ADMIN_HTPASSWD_FILE"
+chmod 600 "$ADMIN_HTPASSWD_FILE"
+echo "Updated admin HTTP authentication file."
 
 echo
 echo "Database credentials are ready."

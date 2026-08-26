@@ -62,17 +62,20 @@ function readJson(request, maxBytes = 16 * 1024) {
     return new Promise((resolve, reject) => {
         const chunks = [];
         let size = 0;
+        let rejected = false;
 
         request.on("data", (chunk) => {
+            if (rejected) return;
             size += chunk.length;
             if (size > maxBytes) {
+                rejected = true;
                 reject(Object.assign(new Error("Request body is too large"), { status: 413 }));
-                request.destroy();
                 return;
             }
             chunks.push(chunk);
         });
         request.on("end", () => {
+            if (rejected) return;
             try {
                 const raw = Buffer.concat(chunks).toString("utf8");
                 resolve(raw ? JSON.parse(raw) : {});
@@ -168,13 +171,14 @@ async function createSubmission(request, response) {
     const body = await readJson(request);
     const name = String(body.name || "").trim();
     const phone = normalizePhone(body.phone);
-    const attendance = body.attendance === "no" ? "no" : "yes";
+    const attendance = String(body.attendance || "");
     const parsedGuestCount = Number.parseInt(body.guestCount, 10);
     const guestCount = Number.isInteger(parsedGuestCount) && parsedGuestCount >= 1 && parsedGuestCount <= 20 ? parsedGuestCount : 1;
     const message = String(body.message || "").trim();
 
     if (!name || name.length > 100) return sendJson(response, 422, { error: "请填写正确的姓名。" });
     if (!/^1\d{10}$/.test(phone)) return sendJson(response, 422, { error: "请填写正确的 11 位手机号。" });
+    if (!new Set(["yes", "no"]).has(attendance)) return sendJson(response, 422, { error: "请选择是否出席。" });
     if (message.length > 1000) return sendJson(response, 422, { error: "留言内容不能超过 1000 个字符。" });
 
     const [result] = await pool.execute(

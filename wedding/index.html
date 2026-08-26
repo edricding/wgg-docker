@@ -283,17 +283,16 @@
                             <div><input type="text" class="form-control" name="phone" id="phone" placeholder="手机号">
                             </div>
                             <div class="radio-buttons">
-                                <p class="font-smiley"><input type="radio" id="attend" name="radio-group" checked=""><label
+                                <p class="font-smiley"><input type="radio" id="attend" name="radio-group" value="yes" checked=""><label
                                         for="attend">是的，我会出席</label></p>
-                                <p class="font-smiley"><input type="radio" id="not" name="radio-group"><label for="not">抱歉，我不能前来</label></p>
+                                <p class="font-smiley"><input type="radio" id="not" name="radio-group" value="no"><label for="not">抱歉，我不能前来</label></p>
                             </div>
                             <div><select name="guest" class="form-control font-smiley">
-                                    <option disabled="disabled" selected="">出席人数</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
+                                    <option value="1" selected="">出席人数：1 人</option>
+                                    <option value="2">出席人数：2 人</option>
+                                    <option value="3">出席人数：3 人</option>
+                                    <option value="4">出席人数：4 人</option>
+                                    <option value="5">出席人数：5 人</option>
                                 </select></div>
                             <div class="submit-area"><button type="submit" class="theme-btn-s3 font-smiley">登记</button>
                             </div>

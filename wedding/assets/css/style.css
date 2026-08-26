@@ -140,6 +140,14 @@ img {
   background-color: #ff1a1a;
   border-left: 5px solid red;
 }
+.contact-validation-active #error.is-success {
+  background-color: #6f5b9c;
+  border-left-color: #49396f;
+}
+.contact-validation-active button[type="submit"]:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
 .back-to-top {
   background-color: rgba(155, 130, 189, 0.7);
   width: 45px;
