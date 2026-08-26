@@ -10,7 +10,7 @@ services:
       - "80:80"
 
   database:
-    image: mysql:8.4
+    image: m.daocloud.io/docker.io/library/mysql:8.4
     container_name: wgg-mysql
     restart: unless-stopped
     environment:

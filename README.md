@@ -49,7 +49,7 @@ Nginx 当前提供三个站点：
 
 ## MySQL 数据库
 
-项目使用 MySQL 8.4 LTS Docker 镜像，数据库数据保存在 Docker 命名卷 `mysql_data` 中。MySQL 的宿主机端口仅绑定到 `127.0.0.1:3306`，不要在阿里云安全组中开放公网 3306。
+项目使用 DaoCloud 国内代理提供的 MySQL 8.4 LTS Docker Official Image，数据库数据保存在 Docker 命名卷 `mysql_data` 中。MySQL 的宿主机端口仅绑定到 `127.0.0.1:3306`，不要在阿里云安全组中开放公网 3306。
 
 首次启用数据库时，在服务器执行：
 
