@@ -44,7 +44,9 @@ healthy=0
 for _ in {1..30}; do
   if curl --fail --silent --show-error http://127.0.0.1/healthz >/dev/null 2>&1 \
     && curl --fail --silent --show-error \
-      --header "Host: wedding.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1; then
+      --header "Host: wedding.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1 \
+    && curl --fail --silent --show-error \
+      --header "Host: db.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1; then
     healthy=1
     break
   fi
@@ -62,3 +64,4 @@ echo "[4/4] Deployment complete."
 "${DOCKER[@]}" compose ps
 echo "Site: http://wagaga.top"
 echo "Wedding: http://wedding.wagaga.top"
+echo "Admin: http://db.wagaga.top"

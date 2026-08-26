@@ -10,6 +10,9 @@
 │   └── index.html
 ├── wedding/
 │   └── index.html
+├── admin/
+│   ├── index.html
+│   └── assets/
 ├── nginx/
 │   └── default.conf
 ├── scripts/
@@ -31,12 +34,15 @@ docker compose up -d --build
 docker compose down
 ```
 
-Nginx 当前提供两个站点：
+Nginx 当前提供三个站点：
 
 - `wagaga.top`：`frontend/` 目录。
 - `wedding.wagaga.top`：`wedding/` 目录。
+- `db.wagaga.top`：`admin/` 目录，当前为留言管理前端演示页。
 
-在阿里云 DNS 中为 `wagaga.top` 添加一条 A 记录，主机记录填写 `wedding`，记录值填写服务器公网 IP，即可访问婚礼子站。
+在阿里云 DNS 中为 `wagaga.top` 添加 A 记录，主机记录分别填写 `wedding` 和 `db`，记录值均填写服务器公网 IP，即可访问婚礼子站与管理后台。
+
+> `db.wagaga.top` 当前只包含演示数据，没有连接数据库。接入真实宾客信息前必须增加登录鉴权并启用 HTTPS，避免手机号和留言被公开访问。
 
 ## 新服务器首次部署
 

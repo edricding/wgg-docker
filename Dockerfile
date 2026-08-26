@@ -3,6 +3,7 @@ FROM nginx:alpine
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY frontend/ /usr/share/nginx/html/
 COPY wedding/ /usr/share/nginx/wedding/
+COPY admin/ /usr/share/nginx/admin/
 
 EXPOSE 80
 

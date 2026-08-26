@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="theme-color" content="#171717">
+    <title>留言管理 · WAGAGA</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <svg class="icon-sprite" aria-hidden="true">
+        <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="icon-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+        <symbol id="icon-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 9 19.37a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.08 14H3v-4h.08A1.7 1.7 0 0 0 4.63 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63 1.7 1.7 0 0 0 10 3.08V3h4v.08A1.7 1.7 0 0 0 15 4.63a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9 1.7 1.7 0 0 0 20.92 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15z"/></symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+        <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+        <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+        <symbol id="icon-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    </svg>
+
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar" aria-label="后台导航">
+            <a class="brand" href="/" aria-label="WAGAGA 管理后台首页">
+                <span class="brand-mark">W</span>
+                <span class="brand-copy"><strong>WAGAGA</strong><small>ADMIN CONSOLE</small></span>
+            </a>
+            <nav class="side-nav">
+                <p class="nav-caption">工作台</p>
+                <a class="nav-link is-muted" href="#overview" aria-disabled="true"><svg><use href="#icon-dashboard"/></svg><span>数据概览</span><em>稍后</em></a>
+                <a class="nav-link is-active" href="#messages" aria-current="page"><svg><use href="#icon-message"/></svg><span>留言信息</span><b id="unreadNavCount">0</b></a>
+                <p class="nav-caption">婚礼网站</p>
+                <a class="nav-link is-muted" href="#schedule" aria-disabled="true"><svg><use href="#icon-calendar"/></svg><span>日程管理</span><em>稍后</em></a>
+                <a class="nav-link is-muted" href="#settings" aria-disabled="true"><svg><use href="#icon-settings"/></svg><span>网站设置</span><em>稍后</em></a>
+            </nav>
+            <div class="sidebar-note"><span class="status-dot"></span><div><strong>静态演示模式</strong><small>尚未连接数据库</small></div></div>
+        </aside>
+
+        <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="关闭导航"></button>
+        <div class="app-content">
+            <header class="topbar">
+                <button class="icon-button menu-button" id="menuButton" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开导航"><svg><use href="#icon-menu"/></svg></button>
+                <div class="topbar-title"><span class="eyebrow">WEDDING.WAGAGA.TOP</span><strong>宾客信息管理</strong></div>
+                <div class="topbar-actions"><span class="demo-pill"><i></i>演示数据</span><div class="operator"><span>WG</span><div><strong>管理员</strong><small>db.wagaga.top</small></div></div></div>
+            </header>
+
+            <main class="main" id="messages">
+                <section class="page-heading" aria-labelledby="pageTitle">
+                    <div><p class="breadcrumb">管理后台 <span>/</span> 留言信息</p><h1 id="pageTitle">所有提交信息</h1><p>集中查看宾客从婚礼页面提交的出席信息与留言。</p></div>
+                    <button class="button button-dark" id="exportButton" type="button"><svg><use href="#icon-download"/></svg>导出 CSV</button>
+                </section>
+
+                <section class="stat-grid" aria-label="提交信息统计">
+                    <article class="stat-card stat-total"><div class="stat-icon"><svg><use href="#icon-message"/></svg></div><div><p>全部提交</p><strong id="totalCount">0</strong><small>当前收到的信息</small></div></article>
+                    <article class="stat-card stat-attending"><div class="stat-icon"><svg><use href="#icon-check"/></svg></div><div><p>确认出席</p><strong id="attendingCount">0</strong><small id="attendingGuests">共 0 位宾客</small></div></article>
+                    <article class="stat-card stat-declined"><div class="stat-icon"><svg><use href="#icon-x"/></svg></div><div><p>无法出席</p><strong id="declinedCount">0</strong><small>已回复的宾客</small></div></article>
+                    <article class="stat-card stat-unread"><div class="stat-icon"><svg><use href="#icon-clock"/></svg></div><div><p>尚未查看</p><strong id="unreadCount">0</strong><small>等待处理的信息</small></div></article>
+                </section>
+
+                <section class="data-card" aria-labelledby="listTitle">
+                    <div class="data-card-header"><div><h2 id="listTitle">提交记录</h2><p>共找到 <strong id="filteredCount">0</strong> 条记录</p></div><button class="button button-light" id="refreshButton" type="button"><svg><use href="#icon-refresh"/></svg>刷新</button></div>
+                    <div class="toolbar">
+                        <label class="search-field"><span class="visually-hidden">搜索提交信息</span><svg><use href="#icon-search"/></svg><input id="searchInput" type="search" autocomplete="off" placeholder="搜索姓名、手机号或留言"></label>
+                        <label class="filter-field"><span>出席状态</span><select id="attendanceFilter"><option value="all">全部状态</option><option value="yes">确认出席</option><option value="no">无法出席</option><option value="pending">尚未确认</option></select></label>
+                        <label class="filter-field"><span>查看状态</span><select id="readFilter"><option value="all">全部记录</option><option value="unread">尚未查看</option><option value="read">已经查看</option></select></label>
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>宾客</th><th>联系方式</th><th>出席状态</th><th>人数</th><th>留言</th><th>提交时间</th><th><span class="visually-hidden">操作</span></th></tr></thead><tbody id="messageRows"></tbody></table></div>
+                    <div class="mobile-list" id="mobileList"></div>
+                    <div class="empty-state" id="emptyState" hidden><span><svg><use href="#icon-search"/></svg></span><h3>没有找到匹配的信息</h3><p>请尝试清空搜索内容或更换筛选条件。</p><button class="button button-light" id="clearFiltersButton" type="button">清空筛选</button></div>
+                    <footer class="table-footer"><p id="rangeText">显示 0–0 条，共 0 条</p><nav class="pagination" aria-label="留言列表分页"><button id="previousPage" type="button" aria-label="上一页"><svg><use href="#icon-chevron-left"/></svg></button><span id="pageNumbers"></span><button id="nextPage" type="button" aria-label="下一页"><svg><use href="#icon-chevron-right"/></svg></button></nav></footer>
+                </section>
+                <p class="page-footnote">当前页面使用本地演示数据。接入服务端后，这里将自动显示婚礼页面提交的真实信息。</p>
+            </main>
+        </div>
+    </div>
+
+    <dialog class="detail-dialog" id="detailDialog" aria-labelledby="detailTitle">
+        <div class="dialog-header"><div><span class="eyebrow">SUBMISSION DETAIL</span><h2 id="detailTitle">提交详情</h2></div><button class="icon-button" id="dialogCloseButton" type="button" aria-label="关闭详情"><svg><use href="#icon-x"/></svg></button></div>
+        <div class="dialog-body">
+            <div class="guest-profile"><span id="detailAvatar">宾</span><div><h3 id="detailName">—</h3><p id="detailId">—</p></div><span id="detailBadge" class="badge">—</span></div>
+            <dl class="detail-grid"><div><dt>手机号</dt><dd><a id="detailPhone" href="#">—</a></dd></div><div><dt>出席人数</dt><dd id="detailGuests">—</dd></div><div><dt>提交时间</dt><dd id="detailTime">—</dd></div><div><dt>查看状态</dt><dd id="detailRead">—</dd></div></dl>
+            <section class="message-detail"><h3>留言内容</h3><p id="detailMessage">—</p></section>
+            <section class="api-note"><strong>数据接入提示</strong><p>下一阶段连接 API 与数据库后，可在这里增加内部备注、状态修改和删除功能。</p></section>
+        </div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="assets/js/app.js" defer></script>
+</body>
+</html>
