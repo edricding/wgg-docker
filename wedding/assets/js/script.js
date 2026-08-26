@@ -80,7 +80,7 @@ function initScrollAnimations() {
 }
 
 function initGallery() {
-  const links = Array.from(document.querySelectorAll(".gallery-lightbox"));
+  const links = document.querySelectorAll(".gallery-lightbox");
   if (!links.length) return;
 
   const lightbox = document.createElement("div");
@@ -142,7 +142,6 @@ function initRsvpForm() {
   const form = document.querySelector("#contact-form-main");
   if (!form) return;
 
-  const success = form.querySelector("#success");
   const error = form.querySelector("#error");
 
   form.addEventListener("submit", (event) => {
@@ -153,7 +152,6 @@ function initRsvpForm() {
     const guest = form.elements.guest.value;
     const isValidPhone = /^1\d{10}$/.test(phone);
 
-    success.style.display = "none";
     error.style.display = "none";
 
     if (!name || !isValidPhone || !guest) {
@@ -209,7 +207,7 @@ function initCopyText() {
       try {
         await navigator.clipboard.writeText(text);
         return;
-      } catch (error) {
+      } catch {
         // Fall back for browsers that expose the API but deny clipboard access.
       }
     }
@@ -221,7 +219,7 @@ function initCopyText() {
       try {
         await copyText(trigger.dataset.copyText);
         showToast("复制成功");
-      } catch (error) {
+      } catch {
         showToast("复制失败，请长按文字复制", true);
       }
     });
