@@ -36,13 +36,29 @@ git fetch --prune origin "$DEPLOY_BRANCH"
 git checkout "$DEPLOY_BRANCH"
 git pull --ff-only origin "$DEPLOY_BRANCH"
 
+required_secret_files=(
+  "$PROJECT_DIR/secrets/mysql_root_password.txt"
+  "$PROJECT_DIR/secrets/mysql_app_password.txt"
+)
+
+for secret_file in "${required_secret_files[@]}"; do
+  if [[ ! -s "$secret_file" ]]; then
+    echo "Error: missing database secret: $secret_file" >&2
+    echo "Run: sudo bash $PROJECT_DIR/scripts/setup-database-secrets.sh" >&2
+    exit 1
+  fi
+done
+
 echo "[2/4] Building and starting containers..."
 "${DOCKER[@]}" compose up -d --build --remove-orphans
 
-echo "[3/4] Waiting for the HTTP health check..."
+echo "[3/4] Waiting for MySQL and HTTP health checks..."
 healthy=0
-for _ in {1..30}; do
-  if curl --fail --silent --show-error http://127.0.0.1/healthz >/dev/null 2>&1 \
+for _ in {1..90}; do
+  if "${DOCKER[@]}" compose exec -T database sh -c \
+      'mysqladmin ping -h 127.0.0.1 -uroot --password="$(cat /run/secrets/mysql_root_password)" --silent' \
+      >/dev/null 2>&1 \
+    && curl --fail --silent --show-error http://127.0.0.1/healthz >/dev/null 2>&1 \
     && curl --fail --silent --show-error \
       --header "Host: wedding.wagaga.top" http://127.0.0.1/ >/dev/null 2>&1 \
     && curl --fail --silent --show-error \
@@ -56,7 +72,7 @@ done
 if [[ "$healthy" -ne 1 ]]; then
   echo "Error: the site did not become healthy in time." >&2
   "${DOCKER[@]}" compose ps
-  "${DOCKER[@]}" compose logs --tail=100 web
+  "${DOCKER[@]}" compose logs --tail=100 web database
   exit 1
 fi
 

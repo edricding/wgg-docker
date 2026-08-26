@@ -9,3 +9,40 @@ services:
     ports:
       - "80:80"
 
+  database:
+    image: mysql:8.4
+    container_name: wgg-mysql
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: wgg_wedding
+      MYSQL_USER: wgg_app
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_app_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    secrets:
+      - mysql_app_password
+      - mysql_root_password
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot --password=\"$$(cat /run/secrets/mysql_root_password)\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    stop_grace_period: 30s
+
+volumes:
+  mysql_data:
+
+secrets:
+  mysql_app_password:
+    file: ./secrets/mysql_app_password.txt
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt

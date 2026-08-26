@@ -23,7 +23,7 @@ PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 DOCKER_REGISTRY_MIRROR="${DOCKER_REGISTRY_MIRROR:-https://ykakt2xs.mirror.aliyuncs.com}"
 
 echo "[1/6] Installing basic tools..."
-dnf -y install git curl wget
+dnf -y install git curl wget openssl
 
 if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
   if [[ "$ALINUX_MAJOR" == "3" ]]; then
@@ -70,4 +70,5 @@ docker compose version
 
 echo "[6/6] Starting the website..."
 cd "$PROJECT_DIR"
+bash scripts/setup-database-secrets.sh
 bash deploy.sh

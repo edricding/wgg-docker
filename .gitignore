@@ -3,6 +3,10 @@
 .env.*
 !.env.example
 
+# Database credentials (generated on the server, never commit these)
+/secrets/*
+!/secrets/.gitkeep
+
 # Editor and IDE settings
 .idea/
 .vscode/
