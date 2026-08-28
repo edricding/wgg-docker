@@ -8,6 +8,7 @@
     "check": "node --check src/server.js"
   },
   "dependencies": {
-    "mysql2": "3.24.2"
+    "mysql2": "3.24.2",
+    "nodemailer": "9.0.6"
   }
 }

@@ -41,12 +41,13 @@ required_secret_files=(
   "$PROJECT_DIR/secrets/mysql_app_password.txt"
   "$PROJECT_DIR/secrets/admin_password.txt"
   "$PROJECT_DIR/secrets/admin.htpasswd"
+  "$PROJECT_DIR/secrets/gmail_app_password.txt"
 )
 
 for secret_file in "${required_secret_files[@]}"; do
   if [[ ! -s "$secret_file" ]]; then
     echo "Error: missing required secret: $secret_file" >&2
-    echo "Run: sudo bash $PROJECT_DIR/scripts/setup-database-secrets.sh" >&2
+    echo "Run the matching setup script under: $PROJECT_DIR/scripts/" >&2
     exit 1
   fi
 done

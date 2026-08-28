@@ -2,12 +2,16 @@ import { timingSafeEqual } from "node:crypto";
 import { readFileSync } from "node:fs";
 import http from "node:http";
 import mysql from "mysql2/promise";
+import nodemailer from "nodemailer";
 
 const port = Number(process.env.PORT || 3000);
 const databaseName = process.env.DB_NAME || "wgg_wedding";
 const databasePassword = readFileSync(process.env.DB_PASSWORD_FILE || "/run/secrets/mysql_app_password", "utf8").trim();
 const adminPassword = readFileSync(process.env.ADMIN_PASSWORD_FILE || "/run/secrets/admin_password", "utf8").trim();
 const adminUsername = process.env.ADMIN_USERNAME || "admin";
+const smtpUser = process.env.SMTP_USER || "d.singine@gmail.com";
+const notificationEmail = process.env.NOTIFICATION_EMAIL || smtpUser;
+const smtpPassword = readFileSync(process.env.SMTP_PASSWORD_FILE || "/run/secrets/gmail_app_password", "utf8").replace(/\s/g, "");
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST || "database",
@@ -20,6 +24,16 @@ const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+});
+
+const mailer = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT || 465),
+    secure: String(process.env.SMTP_SECURE || "true") === "true",
+    auth: { user: smtpUser, pass: smtpPassword },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000
 });
 
 function sendJson(response, status, data, extraHeaders = {}) {
@@ -94,6 +108,36 @@ function normalizePhone(value) {
 function formatDisplayId(id, createdAt) {
     const date = String(createdAt || "").slice(0, 10).replaceAll("-", "") || "00000000";
     return `WG-${date}-${String(id).padStart(3, "0")}`;
+}
+
+async function sendSubmissionNotification({ id, name, phone, attendance, guestCount }) {
+    const submittedAt = new Date().toLocaleString("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        hour12: false
+    });
+    const displayId = formatDisplayId(id, new Date().toISOString());
+    const attendanceText = attendance === "yes" ? "确认出席" : "无法出席";
+    const text = [
+        "收到一条新的婚礼登记信息。",
+        "",
+        `编号：${displayId}`,
+        `姓名：${name}`,
+        `手机号：${phone}`,
+        `出席状态：${attendanceText}`,
+        `出席人数：${guestCount} 人`,
+        `提交时间：${submittedAt}`,
+        "",
+        "请登录管理后台查看和确认：",
+        "https://db.wagaga.top/"
+    ].join("\n");
+
+    const result = await mailer.sendMail({
+        from: `WAGAGA 婚礼登记 <${smtpUser}>`,
+        to: notificationEmail,
+        subject: "新的婚礼登记通知",
+        text
+    });
+    console.log(`Submission notification sent: ${result.messageId}`);
 }
 
 function mapSubmission(row) {
@@ -185,7 +229,16 @@ async function createSubmission(request, response) {
         "INSERT INTO guest_submissions (name, phone, attendance, guest_count, message) VALUES (?, ?, ?, ?, ?)",
         [name, phone, attendance, guestCount, message || null]
     );
-    sendJson(response, 201, { success: true, id: String(result.insertId) });
+
+    let notificationSent = false;
+    try {
+        await sendSubmissionNotification({ id: result.insertId, name, phone, attendance, guestCount });
+        notificationSent = true;
+    } catch (error) {
+        console.error(`Failed to send submission notification for id ${result.insertId}: ${error.message}`);
+    }
+
+    sendJson(response, 201, { success: true, id: String(result.insertId), notificationSent });
 }
 
 async function updateConfirmation(request, response, id) {
@@ -232,6 +285,7 @@ const server = http.createServer((request, response) => {
 async function shutdown(signal) {
     console.log(`Received ${signal}, shutting down.`);
     server.close(async () => {
+        mailer.close();
         await pool.end();
         process.exit(0);
     });

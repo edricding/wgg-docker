@@ -23,6 +23,7 @@
 ├── scripts/
 │   ├── bootstrap-alibaba-linux.sh
 │   ├── setup-database-secrets.sh
+│   ├── setup-email-secret.sh
 │   ├── setup-https.sh
 │   └── renew-https.sh
 ├── deploy.sh
@@ -50,6 +51,7 @@ Nginx 当前提供三个站点：
 cd /opt/wgg-docker
 sudo git pull --ff-only origin main
 sudo bash scripts/setup-database-secrets.sh
+sudo bash scripts/setup-email-secret.sh
 sudo CERTBOT_EMAIL=YOUR_EMAIL@example.com bash scripts/setup-https.sh
 sudo bash deploy.sh
 ```
@@ -62,6 +64,7 @@ sudo bash deploy.sh
 - 数据表：`guest_submissions`
 - 后台用户名：`admin`
 - 后台密码：保存在服务器 `/opt/wgg-docker/secrets/admin_password.txt`
+- Gmail 应用专用密码：保存在服务器 `/opt/wgg-docker/secrets/gmail_app_password.txt`
 
 查看应用密码：
 
@@ -80,6 +83,19 @@ Navicat 使用 SSH 隧道连接：
 - SSH 用户：服务器登录用户（当前一般为 `root`）
 
 数据库密码文件和 Docker 数据卷都不会被 `git pull` 覆盖。不要执行 `docker compose down -v`，其中的 `-v` 会删除 MySQL 数据卷。
+
+## 新提交邮件通知
+
+宾客登记成功写入数据库后，API 会通过 `d.singine@gmail.com` 向同一邮箱发送纯文本通知。邮件失败不会回滚数据库记录，也不会要求宾客重复提交；失败原因会写入 `wgg-api` 日志。
+
+Gmail SMTP 需要 Google 应用专用密码，不能使用普通账号密码。请先为该账号开启两步验证、创建一个 16 位应用专用密码，然后在服务器执行：
+
+```bash
+cd /opt/wgg-docker
+sudo bash scripts/setup-email-secret.sh
+```
+
+脚本会在终端中隐藏输入内容，并把密码保存为仅 root 可读的 Docker Secret。不要把应用专用密码写入 Git、`.env` 或聊天消息。
 
 ## 新服务器首次部署
 

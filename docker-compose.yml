@@ -34,6 +34,12 @@ services:
       DB_PASSWORD_FILE: /run/secrets/mysql_app_password
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD_FILE: /run/secrets/admin_password
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 465
+      SMTP_SECURE: "true"
+      SMTP_USER: d.singine@gmail.com
+      SMTP_PASSWORD_FILE: /run/secrets/gmail_app_password
+      NOTIFICATION_EMAIL: d.singine@gmail.com
     depends_on:
       database:
         condition: service_healthy
@@ -42,6 +48,7 @@ services:
     secrets:
       - mysql_app_password
       - admin_password
+      - gmail_app_password
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
@@ -90,3 +97,5 @@ secrets:
     file: ./secrets/admin_password.txt
   admin_htpasswd:
     file: ./secrets/admin.htpasswd
+  gmail_app_password:
+    file: ./secrets/gmail_app_password.txt
