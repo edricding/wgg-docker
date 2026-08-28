@@ -35,11 +35,14 @@ fi
 echo "Stopping the web container temporarily so Let's Encrypt can verify port 80..."
 "${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" stop web >/dev/null 2>&1 || true
 
+web_stopped=1
 restore_web() {
-  echo "Certificate setup did not finish; restarting the previous web container." >&2
-  "${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" start web >/dev/null 2>&1 || true
+  if [[ "$web_stopped" -eq 1 ]]; then
+    echo "Restarting the previous web container..." >&2
+    "${DOCKER[@]}" start wgg-site >/dev/null 2>&1 || true
+  fi
 }
-trap restore_web ERR
+trap restore_web EXIT INT TERM
 
 "${DOCKER[@]}" run --rm \
   --name wgg-certbot-bootstrap \
@@ -51,6 +54,7 @@ trap restore_web ERR
   --cert-name wagaga.top \
   -d wagaga.top -d wedding.wagaga.top -d db.wagaga.top
 
-trap - ERR
-"${DOCKER[@]}" compose --project-directory "$PROJECT_DIR" start web >/dev/null 2>&1 || true
+"${DOCKER[@]}" start wgg-site >/dev/null 2>&1 || true
+web_stopped=0
+trap - EXIT INT TERM
 echo "HTTPS certificate created. Run: sudo bash ${PROJECT_DIR}/deploy.sh"
