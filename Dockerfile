@@ -1,5 +1,7 @@
 FROM m.daocloud.io/docker.io/library/nginx:alpine
 
+COPY nginx-gzip.conf /etc/nginx/conf.d/00-gzip.conf
+
 COPY nginx/default.conf /etc/nginx/site-templates/bootstrap.conf
 COPY nginx/http-redirect.conf /etc/nginx/site-templates/http-redirect.conf
 COPY nginx/https.conf /etc/nginx/site-templates/https.conf

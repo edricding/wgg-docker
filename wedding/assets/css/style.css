@@ -2076,6 +2076,13 @@ img {
   height: 400px;
   background-attachment: fixed;
 }
+@media (max-width: 767px) {
+  .wpo-video-section {
+    background-image: url(../image/wap/cta.webp);
+    background-size: cover;
+    background-attachment: scroll;
+  }
+}
 @media (min-width: 1600px) {
   .wpo-video-section .container {
     max-width: 1400px;
@@ -3012,6 +3019,13 @@ img {
   content: "";
   background: url(../image/bg1.jpg) no-repeat center center;
   z-index: -1;
+}
+@media (max-width: 767px) {
+  .wpo-event-section:before,
+  .wpo-event-section-s2:before {
+    background-image: url(../image/wap/bg1.webp);
+    background-size: cover;
+  }
 }
 .wpo-event-section:after,
 .wpo-event-section-s2:after {
