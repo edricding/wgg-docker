@@ -52,6 +52,18 @@ for secret_file in "${required_secret_files[@]}"; do
   fi
 done
 
+# Docker Compose mounts local secret files with their host permissions. The API
+# runs as the unprivileged `node` user, so its mounted secrets must be readable.
+# The parent secrets directory remains mode 700 and is accessible only to root
+# on the host.
+chmod 700 "$PROJECT_DIR/secrets"
+chmod 600 "$PROJECT_DIR/secrets/mysql_root_password.txt"
+chmod 644 \
+  "$PROJECT_DIR/secrets/mysql_app_password.txt" \
+  "$PROJECT_DIR/secrets/admin_password.txt" \
+  "$PROJECT_DIR/secrets/admin.htpasswd" \
+  "$PROJECT_DIR/secrets/gmail_app_password.txt"
+
 if [[ ! -s "$PROJECT_DIR/certbot/conf/live/wagaga.top/fullchain.pem" \
   || ! -s "$PROJECT_DIR/certbot/conf/live/wagaga.top/privkey.pem" ]]; then
   echo "Error: HTTPS certificate is missing." >&2

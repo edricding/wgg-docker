@@ -25,10 +25,11 @@ chmod 700 "$SECRET_DIR"
 create_secret() {
   local target_file="$1"
   local label="$2"
+  local file_mode="${3:-600}"
 
   if [[ -s "$target_file" ]]; then
     echo "Keeping existing ${label}."
-    chmod 600 "$target_file"
+    chmod "$file_mode" "$target_file"
     return
   fi
 
@@ -38,17 +39,17 @@ create_secret() {
   fi
 
   openssl rand -base64 36 > "$target_file"
-  chmod 600 "$target_file"
+  chmod "$file_mode" "$target_file"
   echo "Generated ${label}."
 }
 
 create_secret "$ROOT_PASSWORD_FILE" "MySQL root password"
-create_secret "$APP_PASSWORD_FILE" "MySQL application password"
-create_secret "$ADMIN_PASSWORD_FILE" "admin login password"
+create_secret "$APP_PASSWORD_FILE" "MySQL application password" 644
+create_secret "$ADMIN_PASSWORD_FILE" "admin login password" 644
 
 admin_hash="$(openssl passwd -apr1 -in "$ADMIN_PASSWORD_FILE")"
 printf 'admin:%s\n' "$admin_hash" > "$ADMIN_HTPASSWD_FILE"
-chmod 600 "$ADMIN_HTPASSWD_FILE"
+chmod 644 "$ADMIN_HTPASSWD_FILE"
 echo "Updated admin HTTP authentication file."
 
 echo

@@ -15,6 +15,7 @@ mkdir -p "$SECRET_DIR"
 chmod 700 "$SECRET_DIR"
 
 if [[ -s "$PASSWORD_FILE" ]]; then
+  chmod 644 "$PASSWORD_FILE"
   echo "Gmail app password already exists. Keeping the current value."
   echo "To replace it, delete only this file and run the script again:"
   echo "  ${PASSWORD_FILE}"
@@ -33,6 +34,6 @@ if [[ "${#gmail_app_password}" -ne 16 ]]; then
 fi
 
 printf '%s' "$gmail_app_password" > "$PASSWORD_FILE"
-chmod 600 "$PASSWORD_FILE"
+chmod 644 "$PASSWORD_FILE"
 
 echo "Gmail app password saved securely: ${PASSWORD_FILE}"
