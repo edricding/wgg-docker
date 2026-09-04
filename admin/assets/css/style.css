@@ -19,6 +19,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; background: var(--canvas); color: var(--ink); font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif; font-size: 14px; line-height: 1.5; }
 button, input, select { font: inherit; }
@@ -28,6 +29,26 @@ a { color: inherit; }
 .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.login-screen { min-height: 100vh; display: grid; place-items: center; padding: 28px 18px; background: radial-gradient(circle at 75% 18%, rgba(117,98,168,.16), transparent 30%), linear-gradient(135deg, #f7f2e9, #eee7db); }
+.login-card { width: min(430px, 100%); padding: 34px; background: var(--paper); border: 1px solid var(--line); box-shadow: 9px 9px 0 rgba(23,23,23,.12); }
+.login-brand { display: flex; align-items: center; gap: 12px; padding-bottom: 25px; border-bottom: 1px solid var(--line-soft); }
+.login-brand .brand-mark { color: var(--ink); border-color: var(--ink); }
+.login-brand div { display: grid; line-height: 1.1; letter-spacing: .08em; }
+.login-brand strong { font-size: 15px; }
+.login-brand small { margin-top: 5px; color: var(--muted); font-size: 9px; letter-spacing: .2em; }
+.login-heading { position: relative; padding: 30px 0 22px; }
+.login-heading .eyebrow { margin: 0 0 9px; }
+.login-heading h1 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 30px; }
+.login-heading > p:last-child { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.login-icon { position: absolute; top: 27px; right: 0; width: 43px; height: 43px; display: grid; place-items: center; color: var(--purple); background: var(--purple-soft); border: 1px solid var(--purple); border-radius: 50%; }
+.login-form { display: grid; gap: 16px; }
+.login-form label { display: grid; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.login-form input { width: 100%; height: 46px; padding: 0 13px; color: var(--ink); background: #fff; border: 1px solid #aaa399; border-radius: 2px; outline: none; }
+.login-form input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(117,98,168,.12); }
+.login-error { min-height: 21px; margin: -5px 0 -4px; color: var(--red); font-size: 11px; }
+.login-submit { width: 100%; min-height: 46px; }
+.login-footnote { margin: 20px 0 0; color: var(--muted); font-size: 10px; text-align: center; }
 
 .app-shell { min-height: 100vh; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 50; width: var(--sidebar-width); display: flex; flex-direction: column; background: var(--ink); color: #fff; border-right: 1px solid var(--ink); transition: transform .25s ease; }
@@ -72,6 +93,8 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .icon-button { width: 40px; height: 40px; display: inline-grid; place-items: center; padding: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 2px; cursor: pointer; }
 .icon-button:hover { background: var(--ink); color: #fff; }
 .menu-button { display: none; }
+.logout-button { width: 36px; height: 36px; }
+.logout-button svg { width: 17px; height: 17px; }
 
 .main { width: min(1500px, 100%); margin: 0 auto; padding: 34px 32px 28px; }
 .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
@@ -230,6 +253,8 @@ tbody tr.is-unconfirmed:hover { background: #efebf7; }
     .table-footer { padding: 13px 15px; }
 }
 @media (max-width: 480px) {
+    .login-card { padding: 26px 22px; box-shadow: 5px 5px 0 rgba(23,23,23,.11); }
+    .login-heading h1 { font-size: 27px; }
     .demo-pill { padding: 6px 8px; font-size: 9px; }
     .topbar-title strong { font-size: 13px; }
     .page-heading h1 { font-size: 30px; }

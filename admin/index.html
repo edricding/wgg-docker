@@ -23,11 +23,27 @@
         <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
         <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
         <symbol id="icon-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+        <symbol id="icon-logout" viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M14 8l4 4-4 4M18 12H8"/></symbol>
         <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
         <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
     </svg>
 
-    <div class="app-shell">
+    <main class="login-screen" id="loginView">
+        <section class="login-card" aria-labelledby="loginTitle">
+            <div class="login-brand"><span class="brand-mark">W</span><div><strong>WAGAGA</strong><small>ADMIN CONSOLE</small></div></div>
+            <div class="login-heading"><span class="login-icon"><svg><use href="#icon-lock"/></svg></span><p class="eyebrow">SECURE SIGN IN</p><h1 id="loginTitle">登录管理后台</h1><p>请输入数据库中保存的管理员账号和密码。</p></div>
+            <form class="login-form" id="loginForm">
+                <label><span>用户名</span><input id="loginUsername" name="username" type="text" value="admin" autocomplete="username" maxlength="64" required></label>
+                <label><span>密码</span><input id="loginPassword" name="password" type="password" autocomplete="current-password" maxlength="256" required></label>
+                <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+                <button class="button button-dark login-submit" id="loginButton" type="submit"><svg><use href="#icon-lock"/></svg><span>登录</span></button>
+            </form>
+            <p class="login-footnote">登录状态将在 8 小时后自动过期</p>
+        </section>
+    </main>
+
+    <div class="app-shell" id="adminApp" hidden>
         <aside class="sidebar" id="sidebar" aria-label="后台导航">
             <a class="brand" href="/" aria-label="WAGAGA 管理后台首页">
                 <span class="brand-mark">W</span>
@@ -49,7 +65,7 @@
             <header class="topbar">
                 <button class="icon-button menu-button" id="menuButton" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开导航"><svg><use href="#icon-menu"/></svg></button>
                 <div class="topbar-title"><span class="eyebrow">WEDDING.WAGAGA.TOP</span><strong>宾客信息管理</strong></div>
-                <div class="topbar-actions"><span class="demo-pill live-pill"><i></i>实时数据</span><div class="operator"><span>WG</span><div><strong>管理员</strong><small>db.wagaga.top</small></div></div></div>
+                <div class="topbar-actions"><span class="demo-pill live-pill"><i></i>实时数据</span><div class="operator"><span id="operatorAvatar">AD</span><div><strong id="operatorName">admin</strong><small>db.wagaga.top</small></div></div><button class="icon-button logout-button" id="logoutButton" type="button" aria-label="退出登录" title="退出登录"><svg><use href="#icon-logout"/></svg></button></div>
             </header>
 
             <main class="main" id="messages">

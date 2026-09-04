@@ -15,9 +15,6 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot:ro
-    secrets:
-      - admin_htpasswd
-
   api:
     build:
       context: ./backend
@@ -32,8 +29,8 @@ services:
       DB_NAME: wgg_wedding
       DB_USER: wgg_app
       DB_PASSWORD_FILE: /run/secrets/mysql_app_password
-      ADMIN_USERNAME: admin
-      ADMIN_PASSWORD_FILE: /run/secrets/admin_password
+      ADMIN_BOOTSTRAP_USERNAME: admin
+      ADMIN_BOOTSTRAP_PASSWORD_FILE: /run/secrets/admin_password
       SMTP_HOST: smtp.gmail.com
       SMTP_PORT: 465
       SMTP_SECURE: "true"
@@ -95,7 +92,5 @@ secrets:
     file: ./secrets/mysql_root_password.txt
   admin_password:
     file: ./secrets/admin_password.txt
-  admin_htpasswd:
-    file: ./secrets/admin.htpasswd
   gmail_app_password:
     file: ./secrets/gmail_app_password.txt

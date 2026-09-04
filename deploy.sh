@@ -40,7 +40,6 @@ required_secret_files=(
   "$PROJECT_DIR/secrets/mysql_root_password.txt"
   "$PROJECT_DIR/secrets/mysql_app_password.txt"
   "$PROJECT_DIR/secrets/admin_password.txt"
-  "$PROJECT_DIR/secrets/admin.htpasswd"
   "$PROJECT_DIR/secrets/gmail_app_password.txt"
 )
 
@@ -61,7 +60,6 @@ chmod 600 "$PROJECT_DIR/secrets/mysql_root_password.txt"
 chmod 644 \
   "$PROJECT_DIR/secrets/mysql_app_password.txt" \
   "$PROJECT_DIR/secrets/admin_password.txt" \
-  "$PROJECT_DIR/secrets/admin.htpasswd" \
   "$PROJECT_DIR/secrets/gmail_app_password.txt"
 
 if [[ ! -s "$PROJECT_DIR/certbot/conf/live/wagaga.top/fullchain.pem" \
@@ -86,8 +84,10 @@ for _ in {1..90}; do
     && curl --fail --silent --show-error http://127.0.0.1/healthz >/dev/null 2>&1 \
     && curl --fail --silent --show-error \
       --resolve wedding.wagaga.top:443:127.0.0.1 https://wedding.wagaga.top/ >/dev/null 2>&1 \
+    && curl --fail --silent --show-error \
+      --resolve db.wagaga.top:443:127.0.0.1 https://db.wagaga.top/ >/dev/null 2>&1 \
     && [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' \
-      --resolve db.wagaga.top:443:127.0.0.1 https://db.wagaga.top/)" == "401" ]]; then
+      --resolve db.wagaga.top:443:127.0.0.1 https://db.wagaga.top/api/session)" == "401" ]]; then
     healthy=1
     break
   fi

@@ -8,7 +8,8 @@
         confirmation: "all",
         page: 1,
         pageSize: 8,
-        selectedId: null
+        selectedId: null,
+        user: null
     };
     const attendanceMeta = {
         yes: { label: "确认出席", className: "badge-yes" },
@@ -19,7 +20,7 @@
     let toastTimer;
 
     function cacheElements() {
-        ["messageRows", "mobileList", "emptyState", "filteredCount", "totalCount", "attendingCount", "attendingGuests", "declinedCount", "unconfirmedCount", "unconfirmedNavCount", "searchInput", "attendanceFilter", "confirmationFilter", "rangeText", "pageNumbers", "previousPage", "nextPage", "detailDialog", "confirmationButton", "refreshButton", "toast"].forEach((id) => {
+        ["messageRows", "mobileList", "emptyState", "filteredCount", "totalCount", "attendingCount", "attendingGuests", "declinedCount", "unconfirmedCount", "unconfirmedNavCount", "searchInput", "attendanceFilter", "confirmationFilter", "rangeText", "pageNumbers", "previousPage", "nextPage", "detailDialog", "confirmationButton", "refreshButton", "toast", "loginView", "adminApp", "loginForm", "loginUsername", "loginPassword", "loginButton", "loginError", "logoutButton", "operatorName", "operatorAvatar"].forEach((id) => {
             elements[id] = document.getElementById(id);
         });
     }
@@ -46,8 +47,33 @@
 
     async function parseResponse(response) {
         const payload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(payload.error || "服务器暂时无法处理请求。");
+        if (!response.ok) {
+            const error = new Error(payload.error || (response.status === 429 ? "尝试次数过多，请稍后再试。" : "服务器暂时无法处理请求。"));
+            error.status = response.status;
+            throw error;
+        }
         return payload;
+    }
+
+    function showLogin(message = "") {
+        state.user = null;
+        state.messages = [];
+        document.body.classList.remove("sidebar-open");
+        if (elements.detailDialog.open) elements.detailDialog.close();
+        elements.adminApp.hidden = true;
+        elements.loginView.hidden = false;
+        elements.loginError.textContent = message;
+        window.setTimeout(() => elements.loginPassword.focus(), 0);
+    }
+
+    function showAdmin(user) {
+        state.user = user;
+        const username = String(user?.username || "admin");
+        elements.operatorName.textContent = username;
+        elements.operatorAvatar.textContent = username.slice(0, 2).toUpperCase();
+        elements.loginView.hidden = true;
+        elements.adminApp.hidden = false;
+        elements.loginError.textContent = "";
     }
 
     async function loadMessages(showSuccess = false) {
@@ -59,6 +85,7 @@
             render();
             if (showSuccess) showToast("列表已同步");
         } catch (error) {
+            if (error.status === 401) return showLogin("登录已过期，请重新登录。");
             showToast(error.message || "读取提交信息失败。", true);
         } finally {
             elements.refreshButton.disabled = false;
@@ -212,6 +239,7 @@
             renderDetail(updated);
             showToast(nextConfirmed ? "已确认这条记录" : "已取消确认");
         } catch (error) {
+            if (error.status === 401) return showLogin("登录已过期，请重新登录。");
             showToast(error.message || "状态保存失败。", true);
         } finally {
             elements.confirmationButton.disabled = false;
@@ -241,7 +269,61 @@
         showToast(`已导出 ${records.length} 条记录`);
     }
 
+    async function handleLogin(event) {
+        event.preventDefault();
+        const username = elements.loginUsername.value.trim();
+        const password = elements.loginPassword.value;
+        elements.loginButton.disabled = true;
+        elements.loginButton.querySelector("span").textContent = "正在登录…";
+        elements.loginError.textContent = "";
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            const payload = await parseResponse(response);
+            elements.loginPassword.value = "";
+            showAdmin(payload.user);
+            await loadMessages();
+        } catch (error) {
+            elements.loginError.textContent = error.message || "登录失败，请稍后重试。";
+            elements.loginPassword.select();
+        } finally {
+            elements.loginButton.disabled = false;
+            elements.loginButton.querySelector("span").textContent = "登录";
+        }
+    }
+
+    async function logout() {
+        elements.logoutButton.disabled = true;
+        try {
+            const response = await fetch("/api/logout", { method: "POST", headers: { Accept: "application/json" } });
+            await parseResponse(response);
+            elements.loginPassword.value = "";
+            showLogin();
+        } catch (error) {
+            showToast(error.message || "退出登录失败，请稍后重试。", true);
+        } finally {
+            elements.logoutButton.disabled = false;
+        }
+    }
+
+    async function restoreSession() {
+        try {
+            const response = await fetch("/api/session", { headers: { Accept: "application/json" }, cache: "no-store" });
+            if (response.status === 401) return showLogin();
+            const payload = await parseResponse(response);
+            showAdmin(payload.user);
+            await loadMessages();
+        } catch (error) {
+            showLogin(error.message || "暂时无法连接服务器，请稍后重试。");
+        }
+    }
+
     function bindEvents() {
+        elements.loginForm.addEventListener("submit", handleLogin);
+        elements.logoutButton.addEventListener("click", logout);
         elements.searchInput.addEventListener("input", (event) => { state.query = event.target.value; state.page = 1; renderList(); });
         elements.attendanceFilter.addEventListener("change", (event) => { state.attendance = event.target.value; state.page = 1; renderList(); });
         elements.confirmationFilter.addEventListener("change", (event) => { state.confirmation = event.target.value; state.page = 1; renderList(); });
@@ -267,7 +349,7 @@
         cacheElements();
         bindEvents();
         render();
-        loadMessages();
+        restoreSession();
     }
 
     document.addEventListener("DOMContentLoaded", init);

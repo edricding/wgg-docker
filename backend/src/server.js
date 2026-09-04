@@ -1,17 +1,21 @@
-import { timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
 import { readFileSync } from "node:fs";
 import http from "node:http";
+import { promisify } from "node:util";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
 
 const port = Number(process.env.PORT || 3000);
 const databaseName = process.env.DB_NAME || "wgg_wedding";
 const databasePassword = readFileSync(process.env.DB_PASSWORD_FILE || "/run/secrets/mysql_app_password", "utf8").trim();
-const adminPassword = readFileSync(process.env.ADMIN_PASSWORD_FILE || "/run/secrets/admin_password", "utf8").trim();
-const adminUsername = process.env.ADMIN_USERNAME || "admin";
+const adminBootstrapPassword = readFileSync(process.env.ADMIN_BOOTSTRAP_PASSWORD_FILE || "/run/secrets/admin_password", "utf8").trim();
+const adminBootstrapUsername = String(process.env.ADMIN_BOOTSTRAP_USERNAME || "admin").trim().toLowerCase();
 const smtpUser = process.env.SMTP_USER || "d.singine@gmail.com";
 const notificationEmail = process.env.NOTIFICATION_EMAIL || smtpUser;
 const smtpPassword = readFileSync(process.env.SMTP_PASSWORD_FILE || "/run/secrets/gmail_app_password", "utf8").replace(/\s/g, "");
+const scrypt = promisify(scryptCallback);
+const sessionCookieName = "wgg_admin_session";
+const sessionLifetimeSeconds = 8 * 60 * 60;
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST || "database",
@@ -48,28 +52,102 @@ function sendJson(response, status, data, extraHeaders = {}) {
     response.end(body);
 }
 
-function safeEqual(left, right) {
-    const leftBuffer = Buffer.from(left);
-    const rightBuffer = Buffer.from(right);
-    return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+function normalizeUsername(value) {
+    return String(value || "").trim().toLowerCase();
 }
 
-function requireAdmin(request, response) {
-    const authorization = request.headers.authorization || "";
-    if (authorization.startsWith("Basic ")) {
-        try {
-            const decoded = Buffer.from(authorization.slice(6), "base64").toString("utf8");
-            const separator = decoded.indexOf(":");
-            const username = separator >= 0 ? decoded.slice(0, separator) : "";
-            const password = separator >= 0 ? decoded.slice(separator + 1) : "";
-            if (safeEqual(username, adminUsername) && safeEqual(password, adminPassword)) return true;
-        } catch {
-            // Invalid credentials are handled by the generic unauthorized response below.
+function parseCookies(request) {
+    return String(request.headers.cookie || "").split(";").reduce((cookies, part) => {
+        const separator = part.indexOf("=");
+        if (separator < 0) return cookies;
+        const key = part.slice(0, separator).trim();
+        const value = part.slice(separator + 1).trim();
+        if (key) {
+            try {
+                cookies[key] = decodeURIComponent(value);
+            } catch {
+                cookies[key] = value;
+            }
         }
+        return cookies;
+    }, Object.create(null));
+}
+
+function sessionTokenHash(token) {
+    return createHash("sha256").update(token).digest("hex");
+}
+
+async function derivePassword(password, salt) {
+    return scrypt(password, salt, 64, { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
+}
+
+async function createPasswordRecord(password) {
+    const salt = randomBytes(16).toString("hex");
+    const derivedKey = await derivePassword(password, salt);
+    return { salt, hash: derivedKey.toString("hex") };
+}
+
+async function verifyPassword(password, salt, expectedHash) {
+    const derivedKey = await derivePassword(password, salt);
+    const expected = Buffer.from(expectedHash, "hex");
+    return expected.length === derivedKey.length && timingSafeEqual(expected, derivedKey);
+}
+
+async function findAuthenticatedUser(request) {
+    const token = parseCookies(request)[sessionCookieName];
+    if (!token || token.length > 128) return null;
+    const [rows] = await pool.execute(`SELECT users.id, users.username
+        FROM admin_sessions
+        INNER JOIN users ON users.id = admin_sessions.user_id
+        WHERE admin_sessions.token_hash = ?
+          AND admin_sessions.expires_at > CURRENT_TIMESTAMP
+          AND users.is_active = TRUE
+        LIMIT 1`, [sessionTokenHash(token)]);
+    return rows[0] || null;
+}
+
+async function requireAdmin(request, response) {
+    const user = await findAuthenticatedUser(request);
+    if (user) return user;
+    sendJson(response, 401, { error: "登录已过期，请重新登录。" });
+    return null;
+}
+
+function sessionCookie(token, maxAge = sessionLifetimeSeconds) {
+    return `${sessionCookieName}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+}
+
+async function login(request, response) {
+    const body = await readJson(request);
+    const username = normalizeUsername(body.username);
+    const password = String(body.password || "");
+    if (!username || !password || username.length > 64 || password.length > 256) {
+        return sendJson(response, 401, { error: "用户名或密码不正确。" });
     }
 
-    sendJson(response, 401, { error: "需要管理员身份验证。" }, { "WWW-Authenticate": "Basic realm=\"WAGAGA Admin\"" });
-    return false;
+    const [rows] = await pool.execute(`SELECT id, username, password_hash, password_salt
+        FROM users WHERE username = ? AND is_active = TRUE LIMIT 1`, [username]);
+    const user = rows[0];
+    const validHash = user?.password_hash || "0".repeat(128);
+    const validSalt = user?.password_salt || "0".repeat(32);
+    const valid = await verifyPassword(password, validSalt, validHash);
+    if (!user || !valid) return sendJson(response, 401, { error: "用户名或密码不正确。" });
+
+    const token = randomBytes(32).toString("base64url");
+    await pool.execute(`INSERT INTO admin_sessions (user_id, token_hash, expires_at)
+        VALUES (?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL ? SECOND))`,
+    [user.id, sessionTokenHash(token), sessionLifetimeSeconds]);
+    await pool.execute("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?", [user.id]);
+    await pool.query("DELETE FROM admin_sessions WHERE expires_at <= CURRENT_TIMESTAMP");
+    sendJson(response, 200, { user: { id: String(user.id), username: user.username } }, { "Set-Cookie": sessionCookie(token) });
+}
+
+async function logout(request, response) {
+    const token = parseCookies(request)[sessionCookieName];
+    if (token && token.length <= 128) {
+        await pool.execute("DELETE FROM admin_sessions WHERE token_hash = ?", [sessionTokenHash(token)]);
+    }
+    sendJson(response, 200, { success: true }, { "Set-Cookie": sessionCookie("", 0) });
 }
 
 function readJson(request, maxBytes = 16 * 1024) {
@@ -200,6 +278,46 @@ async function migrateDatabase() {
 
     await pool.query("UPDATE guest_submissions SET guest_count = 1 WHERE guest_count IS NULL OR guest_count < 1");
     await pool.query("ALTER TABLE guest_submissions MODIFY COLUMN guest_count TINYINT UNSIGNED NOT NULL DEFAULT 1");
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS users (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        username VARCHAR(64) NOT NULL,
+        password_hash CHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+        password_salt CHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        last_login_at DATETIME NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY uq_users_username (username)
+    ) ENGINE=InnoDB`);
+
+    await pool.query(`CREATE TABLE IF NOT EXISTS admin_sessions (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id BIGINT UNSIGNED NOT NULL,
+        token_hash CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY uq_admin_sessions_token_hash (token_hash),
+        INDEX idx_admin_sessions_expires_at (expires_at),
+        INDEX idx_admin_sessions_user_id (user_id),
+        CONSTRAINT fk_admin_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`);
+
+    const [adminRows] = await pool.query("SELECT id FROM users LIMIT 1");
+    if (adminRows.length === 0) {
+        if (!/^[a-z0-9_.-]{3,64}$/.test(adminBootstrapUsername) || adminBootstrapPassword.length < 8) {
+            throw new Error("Admin bootstrap credentials are invalid.");
+        }
+        const passwordRecord = await createPasswordRecord(adminBootstrapPassword);
+        await pool.execute("INSERT INTO users (username, password_hash, password_salt) VALUES (?, ?, ?)", [
+            adminBootstrapUsername,
+            passwordRecord.hash,
+            passwordRecord.salt
+        ]);
+        console.log(`Created initial database admin user: ${adminBootstrapUsername}`);
+    }
 }
 
 async function listSubmissions(response) {
@@ -265,7 +383,14 @@ async function handleRequest(request, response) {
     }
     if (request.method === "POST" && url.pathname === "/submissions") return createSubmission(request, response);
 
-    if (url.pathname.startsWith("/admin/") && !requireAdmin(request, response)) return;
+    if (request.method === "POST" && url.pathname === "/admin/login") return login(request, response);
+    if (request.method === "POST" && url.pathname === "/admin/logout") return logout(request, response);
+
+    const adminUser = url.pathname.startsWith("/admin/") ? await requireAdmin(request, response) : null;
+    if (url.pathname.startsWith("/admin/") && !adminUser) return;
+    if (request.method === "GET" && url.pathname === "/admin/session") {
+        return sendJson(response, 200, { user: { id: String(adminUser.id), username: adminUser.username } });
+    }
     if (request.method === "GET" && url.pathname === "/admin/submissions") return listSubmissions(response);
 
     const confirmationMatch = url.pathname.match(/^\/admin\/submissions\/(\d+)\/confirmation$/);

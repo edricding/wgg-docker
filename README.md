@@ -39,7 +39,7 @@ Nginx 当前提供三个站点：
 
 在阿里云 DNS 中为 `wagaga.top` 添加 A 记录，主机记录分别填写 `wedding` 和 `db`，记录值均填写服务器公网 IP，即可访问婚礼子站与管理后台。
 
-管理后台使用 HTTPS 和双层 HTTP Basic 身份验证。婚礼站只开放提交接口，读取和修改记录必须登录后台。
+管理后台使用 HTTPS 登录页和数据库会话身份验证。婚礼站只开放提交接口，读取和修改记录必须先登录后台。
 
 ## MySQL 数据库
 
@@ -61,9 +61,9 @@ sudo bash deploy.sh
 - 数据库：`wgg_wedding`
 - 应用用户：`wgg_app`
 - 应用密码：保存在服务器 `/opt/wgg-docker/secrets/mysql_app_password.txt`
-- 数据表：`guest_submissions`
+- 数据表：`guest_submissions`、`users`、`admin_sessions`
 - 后台用户名：`admin`
-- 后台密码：保存在服务器 `/opt/wgg-docker/secrets/admin_password.txt`
+- 初始后台密码：服务器 `/opt/wgg-docker/secrets/admin_password.txt` 中的密码（首次启动时会以 `scrypt` 哈希写入 `users` 表）
 - Gmail 应用专用密码：保存在服务器 `/opt/wgg-docker/secrets/gmail_app_password.txt`
 
 查看应用密码：
@@ -83,6 +83,8 @@ Navicat 使用 SSH 隧道连接：
 - SSH 用户：服务器登录用户（当前一般为 `root`）
 
 数据库密码文件和 Docker 数据卷都不会被 `git pull` 覆盖。不要执行 `docker compose down -v`，其中的 `-v` 会删除 MySQL 数据卷。
+
+后台密码不会以明文写入数据库。`admin_password.txt` 只用于在 `users` 表为空时创建第一个 `admin` 账号；以后重启或部署不会覆盖数据库中的用户。登录成功后使用仅限 HTTPS、不可被 JavaScript 读取且 8 小时失效的会话 Cookie。
 
 ## 新提交邮件通知
 
@@ -132,7 +134,7 @@ sudo bash deploy.sh
 1. 检查服务器工作区是否干净。
 2. 从 `origin/main` 执行 fast-forward 更新。
 3. 重新构建并启动容器。
-4. 验证 MySQL、API、HTTPS 网站和后台登录保护。
+4. 验证 MySQL、API、HTTPS 网站、后台登录页和未登录接口保护。
 
 如果以后使用其他分支：
 
