@@ -472,7 +472,7 @@ img {
 }
 .form select {
   font-style: normal;
-  background: url(../image/select-icon.png) no-repeat right center;
+  background: url(../image/select-icon.png?v=20260904-2) no-repeat right center;
   display: inline-block;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -1406,7 +1406,7 @@ img {
   width: 100%;
   height: 100%;
   content: "";
-  background: url(../image/bg-1.svg) no-repeat center center;
+  background: url(../image/bg-1.svg?v=20260904-2) no-repeat center center;
   z-index: -1;
 }
 @media (max-width: 1400px) {
@@ -1434,7 +1434,7 @@ img {
 .static-hero-s2 .wpo-wedding-date #clock .box:nth-child(2):before {
   left: 3px;
   top: 10px;
-  background: url(../image/bg-2.svg) no-repeat center center;
+  background: url(../image/bg-2.svg?v=20260904-2) no-repeat center center;
   background-size: cover;
 }
 @media (max-width: 1400px) {
@@ -1448,7 +1448,7 @@ img {
 .static-hero-s2 .wpo-wedding-date #clock .box:nth-child(3):before {
   left: 15px;
   top: -8px;
-  background: url(../image/bg-3.svg) no-repeat center center;
+  background: url(../image/bg-3.svg?v=20260904-2) no-repeat center center;
   background-size: cover;
 }
 @media (max-width: 1400px) {
@@ -1462,7 +1462,7 @@ img {
 .static-hero-s2 .wpo-wedding-date #clock .box:nth-child(4):before {
   left: -12px;
   top: -12px;
-  background: url(../image/bg-4.svg) no-repeat center center;
+  background: url(../image/bg-4.svg?v=20260904-2) no-repeat center center;
   background-size: cover;
 }
 @media (max-width: 1400px) {
@@ -2072,13 +2072,13 @@ img {
 .wpo-video-section {
   position: relative;
   z-index: 1;
-  background: url(../image/cta.jpg) no-repeat center center;
+  background: url(../image/cta.jpg?v=20260904-2) no-repeat center center;
   height: 400px;
   background-attachment: fixed;
 }
 @media (max-width: 767px) {
   .wpo-video-section {
-    background-image: url(../image/wap/cta.webp);
+    background-image: url(../image/wap/cta.webp?v=20260904-2);
     background-size: cover;
     background-attachment: scroll;
   }
@@ -2807,7 +2807,7 @@ img {
   -o-appearance: none;
   appearance: none;
   -moz-appearance: none;
-  background: transparent url(../image/select-icon2.png) no-repeat
+  background: transparent url(../image/select-icon2.png?v=20260904-2) no-repeat
     calc(100% - 15px) center;
   position: relative;
 }
@@ -3017,13 +3017,13 @@ img {
   width: 100%;
   height: 430px;
   content: "";
-  background: url(../image/bg1.jpg) no-repeat center center;
+  background: url(../image/bg1.jpg?v=20260904-2) no-repeat center center;
   z-index: -1;
 }
 @media (max-width: 767px) {
   .wpo-event-section:before,
   .wpo-event-section-s2:before {
-    background-image: url(../image/wap/bg1.webp);
+    background-image: url(../image/wap/bg1.webp?v=20260904-2);
     background-size: cover;
   }
 }
@@ -3087,7 +3087,7 @@ img {
   transform: translateX(-50%);
   bottom: 0;
   content: "";
-  background: url(../image/shape.svg) no-repeat center center;
+  background: url(../image/shape.svg?v=20260904-2) no-repeat center center;
   width: 100%;
   height: 40px;
 }
