@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "check": "node --check src/server.js"
+    "check": "node --check src/server.js && node --check src/manage-admin.js",
+    "admin:user": "node src/manage-admin.js"
   },
   "dependencies": {
     "mysql2": "3.24.2",

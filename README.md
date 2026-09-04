@@ -86,6 +86,15 @@ Navicat 使用 SSH 隧道连接：
 
 后台密码不会以明文写入数据库。`admin_password.txt` 只用于在 `users` 表为空时创建第一个 `admin` 账号；以后重启或部署不会覆盖数据库中的用户。登录成功后使用仅限 HTTPS、不可被 JavaScript 读取且 8 小时失效的会话 Cookie。
 
+新增或重置后台用户时，在服务器执行以下命令，并按提示输入密码（输入时终端不会显示密码）：
+
+```bash
+cd /opt/wgg-docker
+sudo docker compose exec -it api npm run admin:user -- dzh
+```
+
+命令会使用随机盐和 `scrypt` 生成密码哈希后写入 `users` 表；如果用户名已经存在，则更新其密码、重新启用账号并注销该账号已有的登录会话。不要直接在 Navicat 中填写明文 `password_hash`。
+
 ## 新提交邮件通知
 
 宾客登记成功写入数据库后，API 会通过 `d.singine@gmail.com` 向同一邮箱发送纯文本通知。邮件失败不会回滚数据库记录，也不会要求宾客重复提交；失败原因会写入 `wgg-api` 日志。
