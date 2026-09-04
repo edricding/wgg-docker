@@ -48,3 +48,6 @@ pnpm-debug.log*
 
 # Local wedding picture assets
 /wedding/assets/picture/
+
+# Uncompressed source for the wedding hero image
+/wedding/assets/image/index/1-2.png
